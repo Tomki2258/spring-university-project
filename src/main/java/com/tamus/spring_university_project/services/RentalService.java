@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public class RentalService {
+public class RentalService implements IRentalService{
     public List<Rental> rentalList;
     private RentalJdbcRepository rentalJdbcRepository;
     private RentalJsonRepository rentalJsonRepository;
@@ -45,22 +45,35 @@ public class RentalService {
 
         return found.isPresent();
     }
-    public void returnVehicle(User user) {
-        if(Main.jsonMode){
-            rentalJsonRepository.returnVehicle(user.getId());
-        }
-        else{
-            rentalJdbcRepository.returnVehicle(user.getId())    ;
-        }
+    public void returnRental(User user) {
+
 
         //rentalList.remove(toRemove);
     }
-    public void rentVehicle(User user,Vehicle vehicle){
+    public Optional<Rental> findByVehicleIdAndReturnDateIsNull(String vehicleId) {
+        return rentalList.stream()
+                .filter(r -> r.getVehicleId().equals(vehicleId))
+                .filter(r -> r.getReturnDate() == null)
+                .findFirst();
+    }
+
+    @Override
+    public boolean isVehicleRented(String vehicleId) {
+        return false;
+    }
+
+    @Override
+    public Optional<Rental> findActiveRentalByVehicleId(String vehicleId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Rental rent(String vehicleId, String userId) {
         String rentalSize = String.valueOf(rentalList.size());
         String currentDate = LocalDateTime.now().toString();
         Rental rental = new Rental(rentalSize,
-                user.getId(),
-                vehicle.getId(),
+                userId,
+                vehicleId,
                 currentDate,
                 "");
         if(Main.jsonMode) {
@@ -69,11 +82,16 @@ public class RentalService {
         else{
             rentalJdbcRepository.add(rental);
         }
+        return rental;
     }
-    public Optional<Rental> findByVehicleIdAndReturnDateIsNull(String vehicleId) {
-        return rentalList.stream()
-                .filter(r -> r.getVehicleId().equals(vehicleId))
-                .filter(r -> r.getReturnDate() == null)
-                .findFirst();
+
+    @Override
+    public boolean returnRental(String vehicleId, String userId) {
+        return false;
+    }
+
+    @Override
+    public List<Rental> findAll() {
+        return List.of();
     }
 }

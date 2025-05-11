@@ -21,6 +21,7 @@ public class JdbcConnectionManager {
             throw new RuntimeException("DB_URL not set!");
         }
     }
+
     public Connection getConnection() {
         try {
             return DriverManager.getConnection(url);

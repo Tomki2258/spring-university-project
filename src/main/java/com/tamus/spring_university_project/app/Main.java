@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class Main {
     public static boolean jsonMode = true;
     public static void main(String[] args) {
+        System.out.println("skibidi");
         /*
         try(Connection connection = JdbcConnectionManager.getInstance().getConnection();
             Statement stmt = connection.createStatement()){

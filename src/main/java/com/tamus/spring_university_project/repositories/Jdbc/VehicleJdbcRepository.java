@@ -7,9 +7,10 @@ import com.google.gson.reflect.TypeToken;
 import com.tamus.spring_university_project.db.JdbcConnectionManager;
 import com.tamus.spring_university_project.models.Vehicle;
 import com.tamus.spring_university_project.repositories.VehicleRepository;
+import com.tamus.spring_university_project.services.IVehicleService;
 
 
-public class VehicleJdbcRepository implements VehicleRepository {
+public class VehicleJdbcRepository implements IVehicleService {
 
     private final Gson gson = new Gson();
 
@@ -17,6 +18,37 @@ public class VehicleJdbcRepository implements VehicleRepository {
     public List<Vehicle> findAll() {
         List<Vehicle> list = new ArrayList<>();
         String sql = "SELECT * FROM vehicle";
+        try (Connection connection = JdbcConnectionManager.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String attrJson = rs.getString("attributes");
+                Map<String, Object> attributes = gson.fromJson(attrJson, new TypeToken<Map<String, Object>>(){}.getType());
+
+                Vehicle vehicle = Vehicle.builder()
+                        .id(rs.getString("id"))
+                        .category(rs.getString("category"))
+                        .brand(rs.getString("brand"))
+                        .model(rs.getString("model"))
+                        .year(rs.getInt("year"))
+                        .plate(rs.getString("plate"))
+                        .price((int) rs.getDouble("price"))
+                        .attributes(attributes != null ? attributes : new HashMap<>())
+                        .build();
+                list.add(vehicle);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error occurred while reading vehicles", e);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Vehicle> findAllActive() {
+        List<Vehicle> list = new ArrayList<>();
+        String sql = "SELECT v.* FROM vehicle v JOIN rental r ON v.id = r.vehicle_id WHERE r.return_date IS NULL";
         try (Connection connection = JdbcConnectionManager.getInstance().getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
@@ -54,7 +86,7 @@ public class VehicleJdbcRepository implements VehicleRepository {
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     String attrJson = rs.getString("attributes");
-                    Map<String, Object> attributes = gson.fromJson(attrJson, new TypeToken<Map<String, Object>>(){}.getType());
+                    Map<String, Object> attributes = gson.fromJson(attrJson, new TypeToken<Map<String, Object>>() {}.getType());
 
                     Vehicle vehicle = Vehicle.builder()
                             .id(rs.getString("id"))
@@ -64,7 +96,7 @@ public class VehicleJdbcRepository implements VehicleRepository {
                             .year(rs.getInt("year"))
                             .plate(rs.getString("plate"))
                             .price((int) rs.getDouble("price"))
-                            .attributes(attributes != null ? (HashMap<String, Object>) attributes : new HashMap<>())
+                            .attributes(attributes != null ? attributes : new HashMap<>())
                             .build();
                     return Optional.of(vehicle);
                 }
@@ -76,6 +108,78 @@ public class VehicleJdbcRepository implements VehicleRepository {
     }
 
     @Override
+    public Vehicle save(Vehicle vehicle) {
+        return null;
+    }
+
+    @Override
+    public List<Vehicle> findAvailableVehicles() {
+        List<Vehicle> list = new ArrayList<>();
+        String sql = "SELECT v.* FROM vehicle v JOIN rental r ON v.id = r.vehicle_id WHERE r.return_date IS NULL";
+        try (Connection connection = JdbcConnectionManager.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String attrJson = rs.getString("attributes");
+                Map<String, Object> attributes = gson.fromJson(attrJson, new TypeToken<Map<String, Object>>(){}.getType());
+
+                Vehicle vehicle = Vehicle.builder()
+                        .id(rs.getString("id"))
+                        .category(rs.getString("category"))
+                        .brand(rs.getString("brand"))
+                        .model(rs.getString("model"))
+                        .year(rs.getInt("year"))
+                        .plate(rs.getString("plate"))
+                        .price((int) rs.getDouble("price"))
+                        .attributes(attributes != null ? attributes : new HashMap<>())
+                        .build();
+                list.add(vehicle);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error occurred while reading vehicles", e);
+        }
+        return list;
+    }
+
+    @Override
+    public List<Vehicle> findRentedVehicles() {
+        List<Vehicle> list = new ArrayList<>();
+        String sql = "SELECT v.* FROM vehicle v JOIN rental r ON v.id = r.vehicle_id WHERE r.return_date IS NOT NULL";
+        try (Connection connection = JdbcConnectionManager.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                String attrJson = rs.getString("attributes");
+                Map<String, Object> attributes = gson.fromJson(attrJson, new TypeToken<Map<String, Object>>(){}.getType());
+
+                Vehicle vehicle = Vehicle.builder()
+                        .id(rs.getString("id"))
+                        .category(rs.getString("category"))
+                        .brand(rs.getString("brand"))
+                        .model(rs.getString("model"))
+                        .year(rs.getInt("year"))
+                        .plate(rs.getString("plate"))
+                        .price((int) rs.getDouble("price"))
+                        .attributes(attributes != null ? attributes : new HashMap<>())
+                        .build();
+                list.add(vehicle);
+
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error occurred while reading vehicles", e);
+        }
+        return list;
+    }
+
+    @Override
+    public boolean isAvailable(String vehicleId) {
+        String sql = "SELECT * FROM vehicle WHERE id = ?";
+        return false;
+    }
+
     public Vehicle addToDatabase(Vehicle vehicle) {
 //        if (vehicle.getId() == null || vehicle.getId().isBlank()) {
 //            vehicle.setId(UUID.randomUUID().toString());
@@ -115,8 +219,6 @@ public class VehicleJdbcRepository implements VehicleRepository {
             throw new RuntimeException("Error occurred while deleting vehicle", e);
         }
     }
-
-    @Override
     public void save() {
 
     }

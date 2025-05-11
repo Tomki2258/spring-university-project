@@ -57,7 +57,7 @@ public class App {
                     userService.save();
 
 
-                    rentalService.rentVehicle(user,venicleManager.vehicles.get(rentIndex - 1));
+                    rentalService.rent(user.getId(),venicleManager.vehicles.get(rentIndex - 1).getId());
                     break;
                 case "2":
                     if(!rentalService.checkUserRent(user)){
@@ -67,7 +67,7 @@ public class App {
                         System.out.println("Zwrocono pojaz\n");
                         //TODO:returnVehicle do RentalRepository
                         //rentalJsonRepository.returnVehicle(user);
-                        rentalService.returnVehicle(user);
+                        rentalService.returnRental(user);
                         user.RemoveVehicle();
                         userService.save();
                     break;
