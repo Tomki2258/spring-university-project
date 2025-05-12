@@ -135,7 +135,6 @@ public class VehicleJdbcRepository implements IVehicleService {
                         .attributes(attributes != null ? attributes : new HashMap<>())
                         .build();
                 list.add(vehicle);
-
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error occurred while reading vehicles", e);
@@ -176,7 +175,24 @@ public class VehicleJdbcRepository implements IVehicleService {
 
     @Override
     public boolean isAvailable(String vehicleId) {
-        String sql = "SELECT * FROM vehicle WHERE id = ?";
+        String sql = "SELECT EXISTS (SELECT 1 FROM rental WHERE vehicle_id = ? AND return_date IS NULL ) AS is_rented;";
+        try (Connection connection = JdbcConnectionManager.getInstance().getConnection();
+             PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+            stmt.setString(1, vehicleId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    String result =rs.getString("is_rented");
+                    if(result.equals("f")){
+                        return false;
+                    }else if(result.equals("t")){
+                        return true;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error occurred while reading vehicle", e);
+        }
         return false;
     }
 
