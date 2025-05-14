@@ -64,10 +64,27 @@ public class RentalJsonRepository implements IRentalRepository {
     }
 
     @Override
-    public void returnVehicle(String userUD) {
+    public boolean returnVehicle(String userUD,String vehicleID) {
         Optional<Rental> found = rentalList.stream().filter(rental -> rental.getUserID().equals(userUD) && rental.getReturnDate().isEmpty()).findFirst();
         found.get().setReturnDate(String.valueOf(LocalDateTime.now()));
 
         save();
+
+        return true;
+    }
+
+    @Override
+    public boolean isVehicleRented(String vehicleId) {
+        return false;
+    }
+
+    @Override
+    public Optional<Rental> findActiveRentalByVehicleId(String vehicleId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Rental rent(String vehicleId, String userId) {
+        return null;
     }
 }
