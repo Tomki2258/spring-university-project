@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Console;
+
 @RestController
 @RequestMapping("api/auth")
 @RequiredArgsConstructor
@@ -32,6 +34,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+        System.out.println("Loging");
         Authentication auth;
         try {
             auth = authenticationManager.authenticate(

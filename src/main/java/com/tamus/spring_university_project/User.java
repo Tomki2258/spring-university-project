@@ -1,7 +1,9 @@
 package com.tamus.spring_university_project;
 
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @AllArgsConstructor
 @Data
 @Builder
@@ -47,7 +49,7 @@ public class User {
         return role;
     }
     public void Describeuser(){
-        System.out.println(this.id + " " +this.login + " " + this.password + " " + this.role);
+        log.info(this.id + " " +this.login + " " + this.password + " " + this.role);
     }
     public String GetNick(){
         return login;
