@@ -2,6 +2,7 @@ package com.tamus.spring_university_project.controllers;
 
 import com.tamus.spring_university_project.models.Vehicle;
 import com.tamus.spring_university_project.repositories.Jdbc.VehicleJdbcRepository;
+import com.tamus.spring_university_project.services.VehicleService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -11,36 +12,32 @@ import java.util.Optional;
 
 @RestController
 public class VehicleController {
-    VehicleJdbcRepository vehicleJdbcRepository = new VehicleJdbcRepository();
+    VehicleService vehicleService = new VehicleService();
     @GetMapping("/vehicles/findAll")
     String findAll(){
-        return vehicleJdbcRepository.findAll().toString();
+        return vehicleService.findAll();
     }
     @GetMapping("/vehicles/findActive")
     String findActive(){
-        return vehicleJdbcRepository.findAllActive().toString();
+        return vehicleService.findActive();
     }
     @GetMapping("/vehicles/findById")
     @ResponseBody
     String findById(@RequestParam String id){
-        Optional<Vehicle> result = vehicleJdbcRepository.findById(id);
-        if(result.isPresent()) {
-            return result.toString();
-        }
-        return "Vehicle not found";
+        return vehicleService.findById(id);
     }
     @GetMapping("/vehicles/findAvailableVehicles")
     String findAvailableVehicles(){
-        return vehicleJdbcRepository.findAvailableVehicles().toString();
+        return findAvailableVehicles();
     }
     @GetMapping("/vehicles/findRentedVehicles")
     String findRentedVehicles(){
-        return vehicleJdbcRepository.findRentedVehicles().toString();
+        return vehicleService.findRentedVehicles();
     }
     @GetMapping("/vehicles/isAvailable")
     @ResponseBody
     boolean isAvailable(@RequestParam String id){
-        return vehicleJdbcRepository.isAvailable(id);
+        return vehicleService.isAvailable(id);
     }
     @GetMapping("/vehicles/text")
     String test(){
