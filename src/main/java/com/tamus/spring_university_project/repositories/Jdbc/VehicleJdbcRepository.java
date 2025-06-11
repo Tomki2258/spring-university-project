@@ -145,7 +145,7 @@ public class VehicleJdbcRepository implements IVehicleService {
     @Override
     public List<Vehicle> findRentedVehicles() {
         List<Vehicle> list = new ArrayList<>();
-        String sql = "SELECT v.* FROM vehicle v JOIN rental r ON v.id = r.vehicle_id WHERE r.return_date IS NOT NULL";
+        String sql = "SELECT v.* FROM vehicle v JOIN rental r ON v.id = r.vehicle_id WHERE r.return_date IS NULL";
         try (Connection connection = JdbcConnectionManager.getInstance().getConnection();
              PreparedStatement stmt = connection.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
