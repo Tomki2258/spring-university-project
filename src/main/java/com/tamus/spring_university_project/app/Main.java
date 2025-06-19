@@ -9,7 +9,7 @@ import com.tamus.spring_university_project.services.UserService;
 import java.util.Scanner;
 
 public class Main {
-    public static boolean jsonMode = true;
+    public static boolean jsonMode = false;
     public static void main(String[] args) {
         System.out.println("skibidi");
         /*

@@ -2,6 +2,7 @@ package com.tamus.spring_university_project;
 
 import com.tamus.spring_university_project.services.UserService;
 import org.apache.commons.codec.digest.DigestUtils;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Scanner;
 import java.util.UUID;
@@ -28,8 +29,10 @@ public class AuthService {
         String passwordInput = scanner.nextLine();
 
         boolean passwordResult = false;
-
-        passwordResult = authentication.CheckPassword(DigestUtils.sha256Hex(passwordInput));
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashed = encoder.encode(passwordInput);
+        //passwordResult = authentication.CheckPassword(DigestUtils.sha256Hex(passwordInput));
+        passwordResult = authentication.CheckPassword(hashed);
         //String hashed = BCrypt.hashpw(passwordInput, BCrypt.gensalt());
 
         //passwordResult = authentication.CheckPassword(passwordInput);
@@ -59,7 +62,9 @@ public class AuthService {
             System.out.println("HASLO NIE MOZE BYC PUSTE");
             return false;
         }
-        String hashed = DigestUtils.sha256Hex(passwordInput);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        //String hashed = DigestUtils.sha256Hex(passwordInput);
+        String hashed = encoder.encode(passwordInput);
         UUID uuid = UUID.randomUUID();
 
         User user = new User(uuid.toString(), loginString, hashed);

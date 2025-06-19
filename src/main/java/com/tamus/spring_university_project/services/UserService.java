@@ -30,6 +30,14 @@ public class UserService {
         return users.get(index);
     }
 
+    public User getUserByNick(String nickname) {
+        for (User user : users) {
+            if (user.GetNick().equals(nickname)) {
+                return user;
+            }
+        }
+        return null;
+    }
     public List<User> getUsers() {
         return users;
     }

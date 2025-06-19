@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("Loging");
+        System.out.println("Login:"+loginRequest.getLogin() +" Password:"+ loginRequest.getPassword());
         Authentication auth;
         try {
             auth = authenticationManager.authenticate(
@@ -42,6 +42,7 @@ public class AuthController {
                             loginRequest.getPassword())
             );
         } catch (BadCredentialsException e) {
+            System.out.println("Błedne dane logowania!");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
@@ -56,13 +57,14 @@ public class AuthController {
     ) {
         UserService userService = new UserService();
         RentalService rentalService = new RentalService();
-        String login = userDetails.getUsername();
-        User user = userService.getUser(0);
+        //String login = userDetails.getUsername();
+        String login = "admin";
+        User user = userService.getUserByNick(login);
         Rental rental = rentalService.rent(rentalRequest.getVehicleId(), user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(rental);
     }
     @Getter
-    public class RentalRequest {
-        public String vehicleId;
+    public static class RentalRequest {
+        private String vehicleId;
     }
 }
