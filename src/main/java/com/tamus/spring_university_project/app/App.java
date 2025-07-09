@@ -4,7 +4,7 @@ import com.tamus.spring_university_project.User;
 import com.tamus.spring_university_project.UserType;
 import com.tamus.spring_university_project.models.Vehicle;
 import com.tamus.spring_university_project.services.RentalService;
-import com.tamus.spring_university_project.services.UserService;
+import com.tamus.spring_university_project.services.UserRepository;
 import com.tamus.spring_university_project.repositories.VenicleManager;
 
 
@@ -12,12 +12,12 @@ import java.util.*;
 
 public class App {
     private User user;
-    private final UserService userService;
+    private final UserRepository userService;
     private final VenicleManager venicleManager;
     //private final RentalJsonRepository rentalJsonRepository;
 
     private final RentalService rentalService = new RentalService();
-    App(User user, UserService userService) {
+    App(User user, UserRepository userService) {
         this.user = user;
         this.userService = userService;
         //rentalJsonRepository = new RentalJsonRepository();

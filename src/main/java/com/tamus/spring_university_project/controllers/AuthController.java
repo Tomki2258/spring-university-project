@@ -1,13 +1,14 @@
 package com.tamus.spring_university_project.controllers;
 
 import com.tamus.spring_university_project.User;
-import com.tamus.spring_university_project.app.Main;
 import com.tamus.spring_university_project.dto.LoginRequest;
 import com.tamus.spring_university_project.dto.LoginResponse;
+import com.tamus.spring_university_project.dto.UserRequest;
 import com.tamus.spring_university_project.models.Rental;
 import com.tamus.spring_university_project.security.JwtUtil;
 import com.tamus.spring_university_project.services.RentalService;
-import com.tamus.spring_university_project.services.UserService;
+import com.tamus.spring_university_project.services.UserRepository;
+import com.tamus.spring_university_project.services.UserServiceImpl;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,13 +19,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.Console;
 
 @RestController
 @RequestMapping("api/auth")
@@ -32,7 +30,7 @@ import java.io.Console;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-
+    private final UserServiceImpl userService;
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
         //System.out.println("Login:"+loginRequest.getLogin() +" Password:"+ loginRequest.getPassword());
@@ -60,7 +58,7 @@ public class AuthController {
         if (userDetails == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        UserService userService = new UserService();
+        UserRepository userService = new UserRepository();
         RentalService rentalService = new RentalService();
         String login = userDetails.getUsername();
         User user = userService.getUserByNick(login);
@@ -70,5 +68,18 @@ public class AuthController {
     @Getter
     public static class RentalRequest {
         private String vehicleId;
+    }
+    @PostMapping("/register")
+    public ResponseEntity<?> register(@RequestBody UserRequest req) {
+        try {
+            userService.register(req);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body("Registered successfully");
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(ex.getMessage());
+        }
     }
 }

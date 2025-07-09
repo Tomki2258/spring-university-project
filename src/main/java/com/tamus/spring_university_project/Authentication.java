@@ -1,12 +1,12 @@
 package com.tamus.spring_university_project;
 
-import com.tamus.spring_university_project.services.UserService;
+import com.tamus.spring_university_project.services.UserRepository;
 import org.apache.commons.codec.digest.DigestUtils;
 
 public class Authentication {
-    private final UserService userService;
+    private final UserRepository userService;
 
-    public Authentication(UserService userService){
+    public Authentication(UserRepository userService){
         this.userService = userService;
     }
     public void DescribeUsers(){

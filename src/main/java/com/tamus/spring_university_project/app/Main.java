@@ -4,7 +4,7 @@ package com.tamus.spring_university_project.app;
 import com.tamus.spring_university_project.AuthService;
 import com.tamus.spring_university_project.Authentication;
 import com.tamus.spring_university_project.User;
-import com.tamus.spring_university_project.services.UserService;
+import com.tamus.spring_university_project.services.UserRepository;
 
 import java.util.Scanner;
 
@@ -31,7 +31,7 @@ public class Main {
             case "2" -> false;
             default -> jsonMode;
         };
-        UserService userService = new UserService();
+        UserRepository userService = new UserRepository();
 
         Authentication authentication = new Authentication(userService);
         AuthService authService = new AuthService(userService,authentication);

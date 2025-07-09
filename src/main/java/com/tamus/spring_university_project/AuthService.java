@@ -1,7 +1,6 @@
 package com.tamus.spring_university_project;
 
-import com.tamus.spring_university_project.services.UserService;
-import org.apache.commons.codec.digest.DigestUtils;
+import com.tamus.spring_university_project.services.UserRepository;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Scanner;
@@ -9,9 +8,9 @@ import java.util.UUID;
 
 public class AuthService {
     private Authentication authentication;
-    private UserService userService;
+    private UserRepository userService;
 
-    public AuthService(UserService userService, Authentication authentication) {
+    public AuthService(UserRepository userService, Authentication authentication) {
         this.authentication = authentication;
         this.userService = userService;
     }
