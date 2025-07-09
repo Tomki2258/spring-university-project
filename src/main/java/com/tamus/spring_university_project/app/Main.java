@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 public class Main {
     public static boolean jsonMode = false;
+    public static User loggedUser = null;
     public static void main(String[] args) {
         System.out.println("skibidi");
         /*

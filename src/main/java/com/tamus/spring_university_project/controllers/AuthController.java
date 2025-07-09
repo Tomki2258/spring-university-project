@@ -1,6 +1,7 @@
 package com.tamus.spring_university_project.controllers;
 
 import com.tamus.spring_university_project.User;
+import com.tamus.spring_university_project.app.Main;
 import com.tamus.spring_university_project.dto.LoginRequest;
 import com.tamus.spring_university_project.dto.LoginResponse;
 import com.tamus.spring_university_project.models.Rental;
@@ -34,7 +35,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("Login:"+loginRequest.getLogin() +" Password:"+ loginRequest.getPassword());
+        //System.out.println("Login:"+loginRequest.getLogin() +" Password:"+ loginRequest.getPassword());
         Authentication auth;
         try {
             auth = authenticationManager.authenticate(
@@ -46,6 +47,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         UserDetails userDetails = (UserDetails) auth.getPrincipal();
+        //System.out.println("DATA:"+userDetails.getUsername() + " " + userDetails.getPassword());
         String token = jwtUtil.generateToken(userDetails);
         LoginResponse responseBody = new LoginResponse(token);
         return ResponseEntity.ok(responseBody);
@@ -55,10 +57,12 @@ public class AuthController {
             @RequestBody RentalRequest rentalRequest,
             @AuthenticationPrincipal UserDetails userDetails
     ) {
+        if (userDetails == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
         UserService userService = new UserService();
         RentalService rentalService = new RentalService();
-        //String login = userDetails.getUsername();
-        String login = "admin";
+        String login = userDetails.getUsername();
         User user = userService.getUserByNick(login);
         Rental rental = rentalService.rent(rentalRequest.getVehicleId(), user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(rental);

@@ -135,7 +135,9 @@ public class App {
         scanner = new Scanner(System.in);
         String line = scanner.nextLine();
         List<String> splitted = List.of(line.split(":"));
-        String id = String.valueOf(UUID.randomUUID());
+        //String id = String.valueOf(UUID.randomUUID());
+
+        String id = String.valueOf(venicleManager.getVehicleCount());
         String brand = splitted.get(0);
         String model = splitted.get(1);
         int year = Integer.valueOf(splitted.get(2));

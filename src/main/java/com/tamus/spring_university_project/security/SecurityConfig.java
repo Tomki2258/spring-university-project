@@ -28,7 +28,9 @@ public class SecurityConfig {
     ) throws Exception{
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll() // Zezwól na dostęp do wszystkich żądań
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/rent").authenticated()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
