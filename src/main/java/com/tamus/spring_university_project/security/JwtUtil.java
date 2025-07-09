@@ -59,7 +59,8 @@ public class JwtUtil {
         return jwsClaims.getPayload();
     }
     private SecretKey getSigningKey() {
-        return Jwts.SIG.HS256.key().build();
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
     private String getUserRole(UserDetails userDetails) {
         return userDetails.getAuthorities().stream()
